@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Post</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        input, textarea, button {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Submit a Post</h2>
+    <form id="postForm">
+        <input type="text" id="title" placeholder="Title" required>
+        <textarea id="body" placeholder="Body" required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="response"></div>
+    
+    <script>
+        document.getElementById("postForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById("title").value.trim();
+            const body = document.getElementById("body").value.trim();
+            const responseDiv = document.getElementById("response");
+            
+            if (!title || !body) {
+                alert("Both fields are required!");
+                return;
+            }
+            
+            fetch("https://jsonplaceholder.typicode.com/posts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ title, body, userId: 1 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                responseDiv.innerHTML = `<h3>Post Created</h3><p><strong>ID:</strong> ${data.id}</p><p><strong>Title:</strong> ${data.title}</p><p><strong>Body:</strong> ${data.body}</p>`;
+                responseDiv.style.display = "block";
+                document.getElementById("postForm").reset();
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
